@@ -279,7 +279,7 @@ def test_validate_relpath_empty_relpath(caplog):
     with pytest.raises(HTTPError):
         with caplog.at_level(logging.INFO):
             fs_clonepath = validate_relpath(relpath, settings, log)
-    assert "Request received with empty relpath." in caplog.text
+    assert f"Request received with invalid relpath: {relpath}." in caplog.text
 
 
 def test_validate_relpath_escape_basedir(caplog):
@@ -289,6 +289,15 @@ def test_validate_relpath_escape_basedir(caplog):
         with caplog.at_level(logging.INFO):
             fs_clonepath = validate_relpath(relpath, settings, log)
     assert f"Request to clone from a path outside of base directory" in caplog.text
+
+
+def test_validate_relpath_as_abspath(caplog):
+    relpath = '/hi'
+    settings = BookstoreSettings(fs_cloning_basedir="/anything")
+    with pytest.raises(HTTPError):
+        with caplog.at_level(logging.INFO):
+            fs_clonepath = validate_relpath(relpath, settings, log)
+    assert f"Request received with invalid relpath: {relpath}." in caplog.text
 
 
 class TestFSCloneHandler(AsyncTestCase):

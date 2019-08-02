@@ -320,9 +320,9 @@ def validate_relpath(relpath, settings, log):
     Path
         Absolute path to file to be cloned.
     """
-    if relpath == '':
-        log.info("Request received with empty relpath.")
-        raise web.HTTPError(400, "Request malformed, must provide a non-empty relative path.")
+    if relpath == '' or Path(relpath).is_absolute():
+        log.info(f"Request received with invalid relpath: {relpath}.")
+        raise web.HTTPError(400, "Request malformed, must provide a relative path.")
 
     fs_basedir = Path(settings.fs_cloning_basedir)
 
